@@ -1,2 +1,2 @@
-# onehuddle_leaderboard_service
-onehuddle_leaderboard_service
+# 1Huddle LeaderBoard Service
+LeaderBoard Service for 1Huddle Games
