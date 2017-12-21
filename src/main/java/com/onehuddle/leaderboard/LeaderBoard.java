@@ -5,7 +5,6 @@ package com.onehuddle.leaderboard;
 
 import java.util.Hashtable;
 import java.util.List;
-
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,9 @@ import com.onehuddle.leaderboard.pojo.LeaderData;
 import com.onehuddle.leaderboard.pojo.MyLeaderBoardData;
 import com.onehuddle.leaderboard.redis.CompanyLeaderboard;
 import com.onehuddle.leaderboard.redis.Leaderboard;
+import com.onehuddle.leaderboard.util.GameRankLogger;
 import com.onehuddle.leaderboard.util.HttpUtils;
+import com.onehuddle.leaderboard.util.StringUtil;
 
 @RestController
 @EnableAutoConfiguration
@@ -124,12 +125,19 @@ public class LeaderBoard {
 			e.printStackTrace();
 		}
 		
+		if(StringUtil.isNull(gameData.getPlayerID())) {
+			gameData.setPlayerID("Unknown");
+		}
 		
 		CompanyLeaderboard lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard");		
 		lb.putCompanyGamesIn(gameData.getCompanyID(), gameData.getGameID());			
 		lb.putCompanyDepartmentMembersIn(gameData.getCompanyID(), gameData.getDepartmentID(), gameData.getPlayerID());
 		lb.putCompanyGroupMembersIn(gameData.getCompanyID(), gameData.getGroupID(), gameData.getPlayerID());		
-		long user_rank = lb.rankMember(gameData.getPlayerID(), gameData.getScore());		
+		Long user_rank = lb.rankMember(gameData.getPlayerID(), gameData.getScore());		
+		
+		GameRankLogger gameLogger = new GameRankLogger();
+		gameLogger.log(gameData, user_rank);
+		gameLogger = null;
 		
 		lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard");                      
         List<LeaderData>  leaderlist = lb.leadersInGame(1, false, Integer.valueOf(3), gameData.getGameID());
@@ -146,21 +154,28 @@ public class LeaderBoard {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {
-			System.out.println("In PUT leaderBoard");
+			System.out.println("In POST leaderBoard");
 			System.out.println(mapper.writeValueAsString(gameData));
 		} catch (JsonProcessingException e) {			
 			e.printStackTrace();
 		}
-		
+
+		if(StringUtil.isNull(gameData.getPlayerID())) {
+			gameData.setPlayerID("Unknown");
+		}
 		
 		CompanyLeaderboard lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard");		
 		lb.putCompanyGamesIn(gameData.getCompanyID(), gameData.getGameID());			
 		lb.putCompanyDepartmentMembersIn(gameData.getCompanyID(), gameData.getDepartmentID(), gameData.getPlayerID());
 		lb.putCompanyGroupMembersIn(gameData.getCompanyID(), gameData.getGroupID(), gameData.getPlayerID());		
 		//long user_rank = lb.rankMember(gameData.getPlayerID(), gameData.getScore());		
-		Double user_rank = lb.changeScoreFor(gameData.getPlayerID(), gameData.getScore());
+		Double user_score = lb.changeScoreFor(gameData.getPlayerID(), gameData.getScore());
 		
+		Long user_rank = lb.rankForIn("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard", gameData.getPlayerID(), false);
 		
+		GameRankLogger gameLogger = new GameRankLogger();
+		gameLogger.log(gameData, user_rank, user_score);
+		gameLogger = null;
 		//lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard");                      
         //List<LeaderData>  leaderlist = lb.leadersInGame(1, false, Integer.valueOf(3), gameData.getGameID());
         HttpUtils utils = new HttpUtils();

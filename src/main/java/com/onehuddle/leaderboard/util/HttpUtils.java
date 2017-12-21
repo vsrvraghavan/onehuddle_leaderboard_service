@@ -122,6 +122,8 @@ public class HttpUtils {
 	
 	public void updateAdminPanel(GameScoreData gameData) {
 		
+		Integer leader_list_limit = 10;
+		
 		OneHuddleProperties props = OneHuddleProperties.getInstance();
 		
 		System.out.println("Company Name In Property File : "+props.getProperty("company_name"));
@@ -145,7 +147,7 @@ public class HttpUtils {
 			try {
 				
 				CompanyLeaderboard lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_game_"+gameData.getGameID()+"_leaderboard");                      
-		        List<LeaderData>  game_leaderlist = lb.leadersInGame(1, false, Integer.valueOf(3), gameData.getGameID());
+		        List<LeaderData>  game_leaderlist = lb.leadersInGame(1, false, leader_list_limit, gameData.getGameID());
 				
 				Gson gson = new Gson();
 				AdminPanelMessage apm = new AdminPanelMessage();
@@ -164,7 +166,7 @@ public class HttpUtils {
 				if(props.getProperty("company_name").equalsIgnoreCase(gameData.getCompanyID())) {
 					
 					lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_leaderboard");                      
-					List<LeaderData>  company_leaderlist = lb.mergeScoresIn(gameData.getCompanyID(), 1, false, Integer.valueOf(3));
+					List<LeaderData>  company_leaderlist = lb.mergeScoresIn(gameData.getCompanyID(), 1, false, leader_list_limit);
 					apmd.setLbC(company_leaderlist);
 				}
 				
@@ -173,7 +175,7 @@ public class HttpUtils {
 				
 				if(props.getProperty("department_name").equalsIgnoreCase(gameData.getDepartmentID())){
 					lb = new CompanyLeaderboard("company_"+gameData.getCompanyID()+"_department_"+gameData.getDepartmentID()+"_leaderboard");                      			        
-					List<LeaderData>  department_leaderlist = lb.departmentScoresIn(gameData.getCompanyID(), gameData.getDepartmentID(), 1, false, Integer.valueOf(3));
+					List<LeaderData>  department_leaderlist = lb.departmentScoresIn(gameData.getCompanyID(), gameData.getDepartmentID(), 1, false, leader_list_limit);
 			        apmd.setLbD(department_leaderlist);
 				}
 				

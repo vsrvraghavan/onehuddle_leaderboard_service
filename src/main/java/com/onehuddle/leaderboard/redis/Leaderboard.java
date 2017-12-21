@@ -206,7 +206,7 @@ public class Leaderboard {
 	 * @param score Score
 	 * @return
 	 */
-	public long rankMember(String member, double score) {
+	public Long rankMember(String member, double score) {
 		System.out.println("rankMember : _leaderboardName : " + _leaderboardName);
 		return this.rankMemberIn(_leaderboardName, member, score);
 	}
@@ -219,7 +219,7 @@ public class Leaderboard {
 	 * @param score Score
 	 * @return
 	 */
-	public long rankMemberIn(String leaderboardName, String member, double score) {
+	public Long rankMemberIn(String leaderboardName, String member, double score) {
 		System.out.println("rankMemberIn : _leaderboardName : " + _leaderboardName);
 		return _jedis.zadd(leaderboardName, score, member);
 	}
