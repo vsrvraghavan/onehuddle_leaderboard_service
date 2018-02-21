@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onehuddle.leaderboard.pojo.GameData;
 import com.onehuddle.leaderboard.pojo.GameScoreData;
 import com.onehuddle.leaderboard.pojo.LeaderData;
 import com.onehuddle.leaderboard.pojo.MyLeaderBoardData;
@@ -185,6 +186,21 @@ public class LeaderBoard {
         
 		return String.valueOf(user_rank);		
     }
+	
+	
+	
+	
+	@RequestMapping(value="/game", method = RequestMethod.PUT)
+    public String setGame(@RequestBody GameData gameData) { 		
+		System.out.println("In PUT game");
+		
+		return "null";
+		
+    }
+	
+	
+	
+	
 	
 		
 	

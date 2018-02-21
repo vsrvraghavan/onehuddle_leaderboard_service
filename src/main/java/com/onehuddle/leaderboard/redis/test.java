@@ -9,6 +9,10 @@ import java.util.List;
 import com.onehuddle.leaderboard.pojo.LeaderData;
 import com.onehuddle.leaderboard.util.HttpUtils;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
 /**
  * @author ragha
  *
@@ -60,7 +64,7 @@ public class test {
 		
 		*/
 		
-		
+		/*
 		List<LeaderData> leaderList1 = new ArrayList<LeaderData>();
 		
 		LeaderData ld = new LeaderData("Raga", 1000, 3, "GAME1");
@@ -72,8 +76,13 @@ public class test {
 		
 		HttpUtils httputils = new HttpUtils();
 		httputils.updateAdminPanel(leaderList1, "GAME1");
+		*/
 		
-		
+		JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+        Jedis jedis = pool.getResource();
+
+        jedis.set("notify", "umq");
+        jedis.expire("notify", 10);
 		
 	}
 	
